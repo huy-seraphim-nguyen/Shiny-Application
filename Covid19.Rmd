@@ -1,0 +1,79 @@
+---
+title: "Covid-19 in Belgium"
+author: "Huy Nguyen"
+date: "31/07/2021"
+output: slidy_presentation
+urlcolor: blue
+linkcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Introduction
+
+
+In March 2019, Covid-19 reached Belgium, starting in one province and spread out over the whole country in few months.
+
+We have developed a small web application that shows the number of Covid-19 hospitalisations by provinces during the period of 2020-03-15 to 2021-07-27.
+
+The data are provided by Sciensano, the Belgian institute for health, and are available at <https://epistat.wiv-isp.be/covid/> under the section “Datasets/Hospitalisations by date and provinces”.
+
+The web application is hosted at  
+&nbsp;&nbsp;&nbsp;&nbsp;  <https://huy-s-nguyen.shinyapps.io/Covid-19-in-Belgium-2021/>
+  
+The code of the web application, ui.R and server.R, can be found at  
+&nbsp;&nbsp;&nbsp;&nbsp;  <https://github.com/huy-seraphim-nguyen/Shiny-Application/>    
+  
+
+## The application
+
+The application can be ran online by visiting the URL  
+&nbsp;&nbsp;&nbsp;&nbsp;  <https://huy-s-nguyen.shinyapps.io/Covid-19-in-Belgium-2021/>
+
+The application presents 2 panels:<br>
+ 
+- The left panel provides the selection of a province, using a drop down list menu.
+- The right panel presents a barplot of the Total number of hospitalisations by provinces.<br>
+It also shows the number of hospitalisations of the province you selected in the left panel.
+ 
+## Example application output (right panel)
+<br>
+An example of the right panel when user selects "Brussels" as province.
+<br>
+<br>
+
+```{r , echo = FALSE, warning=FALSE, results = "asis"}
+library(ggplot2)
+# Global data & variables
+df <- read.csv("COVID19BE_HOSP.csv")
+df <- df[, c("PROVINCE", "TOTAL_IN")]
+
+# aggregate data by PROVINCE
+df1 <- aggregate(. ~ PROVINCE, data = df, FUN = sum)
+
+# replace the French(accent) name
+df1[5,1]<-"Liege"
+
+
+p <- ggplot(data=df1, aes(x=PROVINCE, y=TOTAL_IN)) +
+          geom_bar(stat="identity", fill="steelblue") + coord_flip()
+print(p)
+
+# write new line
+writeLines("\n")
+ 
+res <- df1[df1$PROVINCE=="Brussels",]
+msg <- paste("Total hospitalisations in ", res[1], " : ", res[2] )
+
+# print msg without surrounding quotes and leading []
+cat(msg)
+```
+
+## Thank you for your attention
+ 
+ 
+ 
+
